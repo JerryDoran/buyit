@@ -34,6 +34,20 @@ export default function AuthContextProvider({ children }) {
     }
   }
 
+  async function loadUser() {
+    try {
+      setLoading(true);
+      const { data } = await axios.get('/api/auth/session?update');
+
+      if (data?.user) {
+        setUser(data.user);
+        router.replace('/me');
+      }
+    } catch (error) {
+      setError(error?.response?.data?.message);
+    }
+  }
+
   async function updateUser(formData) {
     try {
       setLoading(true);
@@ -48,10 +62,30 @@ export default function AuthContextProvider({ children }) {
       );
 
       if (data?.user) {
+        loadUser();
         setLoading(false);
       }
     } catch (error) {
       setLoading(false);
+      setError(error?.response?.data?.message);
+    }
+  }
+
+  async function updatePassword({ currentPassword, newPassword }) {
+    try {
+      setLoading(true);
+      const { data } = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me/update_password`,
+        {
+          currentPassword,
+          newPassword,
+        }
+      );
+
+      if (data?.success) {
+        router.replace('/me');
+      }
+    } catch (error) {
       setError(error?.response?.data?.message);
     }
   }
@@ -122,6 +156,7 @@ export default function AuthContextProvider({ children }) {
         setUpdated,
         updateAddress,
         updateUser,
+        updatePassword,
         deleteAddress,
       }}
     >

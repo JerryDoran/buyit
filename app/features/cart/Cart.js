@@ -96,7 +96,7 @@ export default function Cart() {
                             </button>
                             <input
                               type='number'
-                              className='outline-none focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-base cursor-default flex text-gray-900 custom-input-number pl-3.5'
+                              className='outline-none focus:outline-none text-center w-12 bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-base cursor-default flex text-gray-900 custom-input-number pl-3.5'
                               name='custom-input-number'
                               value={cartItem.quantity}
                               readOnly

@@ -1,7 +1,13 @@
+'use client';
+
+/* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
 import BreadCrumbs from '../layout/BreadCrumbs';
+import { useContext } from 'react';
+import { CartContext } from '@/store/CartContext';
 
-export default function Shipping() {
+export default function Shipping({ addresses }) {
+  const { cart } = useContext(CartContext);
   return (
     <div>
       <BreadCrumbs />
@@ -10,32 +16,38 @@ export default function Shipping() {
           <div className='flex flex-col md:flex-row gap-4 lg:gap-8'>
             <main className='md:w-2/3'>
               <article className='border border-gray-200 bg-white shadow-sm rounded p-4 lg:p-6 mb-5'>
-                <h2 class='text-xl font-semibold mb-5'>Shipping information</h2>
+                <h2 className='text-xl font-semibold mb-5'>
+                  Shipping information
+                </h2>
 
-                <div class='grid sm:grid-cols-2 gap-4 mb-6'>
-                  <label class='flex p-3 border border-gray-200 rounded-md bg-gray-50 hover:border-blue-400 hover:bg-blue-50 cursor-pointer'>
-                    <span>
-                      <input
-                        name='shipping'
-                        type='radio'
-                        class='h-4 w-4 mt-1'
-                      />
-                    </span>
-                    <p class='ml-2'>
-                      <span>1295 street</span>
-                      <small class='block text-sm text-gray-400'>
-                        Orlando, FL, 84753
-                        <br />
-                        US
-                        <br />
-                        9871234576
-                      </small>
-                    </p>
-                  </label>
+                <div className='grid sm:grid-cols-2 gap-4 mb-6'>
+                  {addresses?.map((address) => (
+                    <>
+                      <label className='flex p-3 border border-gray-200 rounded-md bg-gray-50 hover:border-blue-400 hover:bg-blue-50 cursor-pointer'>
+                        <span>
+                          <input
+                            name='shipping'
+                            type='radio'
+                            className='h-4 w-4 mt-1'
+                          />
+                        </span>
+                        <p className='ml-2'>
+                          <span>{address.street}</span>
+                          <small className='block text-sm text-gray-400'>
+                            {address.city}, {address.state}, {address.zipCode}
+                            <br />
+                            {address.country}
+                            <br />
+                            {address.phone}
+                          </small>
+                        </p>
+                      </label>
+                    </>
+                  ))}
                 </div>
 
                 <Link
-                  to='/address/new'
+                  href='/address/new'
                   className='px-4 py-2 inline-block text-blue-600 border border-gray-300 rounded-md hover:bg-gray-100'
                 >
                   <i className='mr-1 fa fa-plus'></i> Add new address
@@ -76,25 +88,32 @@ export default function Shipping() {
 
                 <h2 className='text-lg font-semibold mb-3'>Items in cart</h2>
 
-                <figure className='flex items-center mb-4 leading-5'>
-                  <div>
-                    <div className='block relative w-20 h-20 rounded p-1 border border-gray-200'>
-                      <img
-                        width='50'
-                        height='50'
-                        src={'/logo192.png'}
-                        alt='Title'
-                      />
-                      <span className='absolute -top-2 -right-2 w-6 h-6 text-sm text-center flex items-center justify-center text-white bg-gray-400 rounded-full'>
-                        3
-                      </span>
+                {cart?.cartItems?.map((item) => (
+                  <figure
+                    key={item.id}
+                    className='flex items-center mb-4 leading-5'
+                  >
+                    <div>
+                      <div className='block relative w-20 h-20 rounded p-1 border border-gray-200'>
+                        <img
+                          width='50'
+                          height='50'
+                          src={item.image}
+                          alt='Title'
+                        />
+                        <span className='absolute -top-2 -right-2 w-6 h-6 text-sm text-center flex items-center justify-center text-white bg-gray-400 rounded-full'>
+                          {item.quantity}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  <figcaption className='ml-3'>
-                    <p> product name</p>
-                    <p className='mt-1 text-gray-400'>Total: $34</p>
-                  </figcaption>
-                </figure>
+                    <figcaption className='ml-3'>
+                      <p>{item.name.substring(0, 50)}</p>
+                      <p className='mt-1 text-gray-400'>
+                        Total: ${item.quantity * item.price}
+                      </p>
+                    </figcaption>
+                  </figure>
+                ))}
               </article>
             </aside>
           </div>

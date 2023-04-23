@@ -1,6 +1,8 @@
 import { uploads } from '../lib/cloudinary';
 import User from '../models/User';
 import fs from 'fs';
+import bcrypt from 'bcryptjs';
+import ErrorHandler from '../lib/errorHandler';
 
 export async function registerUser(req, res) {
   const user = await User.create(req.body);
@@ -26,9 +28,29 @@ export async function updateUser(req, res) {
     newUserData.avatar = avatarResponse;
   }
 
-  console.log(newUserData);
-
   const user = await User.findByIdAndUpdate(req.user._id, newUserData);
 
   res.status(200).json({ user });
+}
+
+export async function updatePassword(req, res, next) {
+  const user = await User.findById(req.user._id).select('+password');
+
+  console.log(req.body.currentPassword);
+  console.log(user.password);
+
+  const isPasswordMatched = await bcrypt.compare(
+    req.body.currentPassword,
+    user.password
+  );
+
+  if (!isPasswordMatched) {
+    return next(new ErrorHandler('Your old password is incorrect!', 400));
+  }
+
+  user.password = req.body.newPassword;
+
+  await user.save();
+
+  res.status(200).json({ success: true });
 }

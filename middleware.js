@@ -4,6 +4,7 @@ export default withAuth(async function middleware(req) {
   // authorize roles
 });
 
+// this is now a protected route that next auth recognizes.  it will protect all routes after '/me'
 export const config = {
-  matcher: ['/me'], // this is now a protected route that next auth recognizes
+  matcher: ['/me/:path*'],
 };
