@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { useContext } from 'react';
 
 export default function Cart() {
-  const { cart, addItemToCart, deleteItemFromCart } = useContext(CartContext);
+  const { cart, addItemToCart, deleteItemFromCart, saveOnCheckout } =
+    useContext(CartContext);
 
   function increaseQuantity(cartItem) {
     const newQuantity = cartItem?.quantity + 1;
@@ -43,6 +44,16 @@ export default function Cart() {
     (acc, curItem) => acc + curItem.quantity,
     0
   );
+
+  function handleCheckout() {
+    const data = {
+      amount: amountWithoutTax,
+      tax: taxAmount,
+      totalAmount,
+    };
+
+    saveOnCheckout(data);
+  }
 
   return (
     <>
@@ -165,7 +176,10 @@ export default function Cart() {
                     </li>
                   </ul>
 
-                  <a className='px-4 py-3 mb-2 inline-block text-lg w-full text-center font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 cursor-pointer'>
+                  <a
+                    className='px-4 py-3 mb-2 inline-block text-lg w-full text-center font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 cursor-pointer'
+                    onClick={handleCheckout}
+                  >
                     Continue
                   </a>
 

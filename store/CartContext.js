@@ -64,12 +64,31 @@ export default function CartContextProvider({ children }) {
     setCartToState();
   }
 
+  function saveOnCheckout(data) {
+    const { amount, tax, totalAmount } = data;
+
+    const checkoutInfo = {
+      amount,
+      tax,
+      totalAmount,
+    };
+
+    const newCart = { ...cart, checkoutInfo };
+
+    localStorage.setItem('cart', JSON.stringify(newCart));
+    setCartToState();
+
+    router.push('/shipping');
+  }
+
   useEffect(() => {
     setCartToState();
   }, []);
 
   return (
-    <CartContext.Provider value={{ cart, addItemToCart, deleteItemFromCart }}>
+    <CartContext.Provider
+      value={{ cart, addItemToCart, deleteItemFromCart, saveOnCheckout }}
+    >
       {children}
     </CartContext.Provider>
   );

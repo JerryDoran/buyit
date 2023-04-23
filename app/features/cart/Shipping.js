@@ -3,14 +3,35 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
 import BreadCrumbs from '../layout/BreadCrumbs';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { CartContext } from '@/store/CartContext';
+import { toast } from 'react-toastify';
 
 export default function Shipping({ addresses }) {
   const { cart } = useContext(CartContext);
+  const [shippingInfo, setShippingInfo] = useState('');
+
+  function setShippingAddress(address) {
+    setShippingInfo(address._id);
+  }
+
+  async function handleCheckout() {
+    if (!shippingInfo) {
+      return toast.error('Please select a shipping address.');
+    } else {
+      // Move to stripe checkout page
+    }
+  }
+
+  const breadCrumbs = [
+    { name: 'Home', url: '/' },
+    { name: 'Cart', url: '/cart' },
+    { name: 'Order', url: '' },
+  ];
+
   return (
     <div>
-      <BreadCrumbs />
+      <BreadCrumbs breadCrumbs={breadCrumbs} />
       <section className='py-10 bg-gray-50'>
         <div className='container max-w-screen-xl mx-auto px-4'>
           <div className='flex flex-col md:flex-row gap-4 lg:gap-8'>
@@ -23,7 +44,10 @@ export default function Shipping({ addresses }) {
                 <div className='grid sm:grid-cols-2 gap-4 mb-6'>
                   {addresses?.map((address) => (
                     <>
-                      <label className='flex p-3 border border-gray-200 rounded-md bg-gray-50 hover:border-blue-400 hover:bg-blue-50 cursor-pointer'>
+                      <label
+                        className='flex p-3 border border-gray-200 rounded-md bg-gray-50 hover:border-blue-400 hover:bg-blue-50 cursor-pointer'
+                        onClick={() => setShippingAddress(address)}
+                      >
                         <span>
                           <input
                             name='shipping'
@@ -60,7 +84,10 @@ export default function Shipping({ addresses }) {
                   >
                     Back
                   </Link>
-                  <a className='px-5 py-2 inline-block text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 cursor-pointer'>
+                  <a
+                    className='px-5 py-2 inline-block text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 cursor-pointer'
+                    onClick={handleCheckout}
+                  >
                     Checkout
                   </a>
                 </div>
@@ -72,15 +99,17 @@ export default function Shipping({ addresses }) {
                 <ul>
                   <li className='flex justify-between mb-1'>
                     <span>Amount:</span>
-                    <span>$343</span>
+                    <span>${cart?.checkoutInfo?.amount}</span>
                   </li>
                   <li className='flex justify-between mb-1'>
                     <span>Est TAX:</span>
-                    <span>$34</span>
+                    <span>${cart?.checkoutInfo?.tax}</span>
                   </li>
                   <li className='border-t flex justify-between mt-3 pt-3'>
                     <span>Total Amount:</span>
-                    <span className='text-gray-900 font-bold'>$343</span>
+                    <span className='text-gray-900 font-bold'>
+                      ${cart?.checkoutInfo?.totalAmount}
+                    </span>
                   </li>
                 </ul>
 
