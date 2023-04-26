@@ -6,6 +6,7 @@ import BreadCrumbs from '../layout/BreadCrumbs';
 import { useContext, useState } from 'react';
 import { CartContext } from '@/store/CartContext';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 export default function Shipping({ addresses }) {
   const { cart } = useContext(CartContext);
@@ -18,8 +19,20 @@ export default function Shipping({ addresses }) {
   async function handleCheckout() {
     if (!shippingInfo) {
       return toast.error('Please select a shipping address.');
-    } else {
-      // Move to stripe checkout page
+    }
+
+    try {
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/orders/checkout_session`,
+        {
+          items: cart?.cartItems,
+          shippingInfo,
+        }
+      );
+
+      window.location.href = data.url;
+    } catch (error) {
+      console.log(error);
     }
   }
 
