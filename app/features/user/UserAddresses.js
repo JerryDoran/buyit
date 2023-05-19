@@ -3,7 +3,7 @@ import Link from 'next/link';
 export default function UserAddresses({ addresses }) {
   return (
     <>
-      {addresses.map((address) => (
+      {addresses?.map((address) => (
         <Link key={address.street} href={`/address/${address._id}`}>
           <div className='mb-5 gap-4'>
             <figure className='w-full flex align-center bg-gray-100 p-4 rounded-md cursor-pointer'>

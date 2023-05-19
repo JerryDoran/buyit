@@ -1,20 +1,35 @@
-import OrderItem from './OrderItem';
-import Sidebar from '../layout/Sidebar';
+'use client';
 
-export default function ListOrders() {
+import { useContext, useEffect } from 'react';
+import CustomPagination from '../layout/CustomPagination';
+import OrderItem from './OrderItem';
+import { CartContext } from '@/store/CartContext';
+import { useRouter, useSearchParams } from 'next/navigation';
+
+export default function ListOrders({ orders }) {
+  const { clearCart } = useContext(CartContext);
+
+  const params = useSearchParams();
+  const router = useRouter();
+  const orderSuccess = params.get('order_success');
+
+  useEffect(() => {
+    if (orderSuccess === 'true') {
+      clearCart();
+      router.replace('/me/orders');
+    }
+  }, []);
+
   return (
     <>
-      <section className='py-10'>
-        <div className='container max-w-screen-xl mx-auto px-4'>
-          <div className='flex flex-col md:flex-row -mx-4'>
-            <Sidebar />
-            <main className='md:w-2/3 lg:w-3/4 px-4'>
-              <h3 className='text-xl font-semibold mb-5'>Your Orders</h3>
-              <OrderItem />
-            </main>
-          </div>
-        </div>
-      </section>
+      <h3 className='text-xl font-semibold mb-5'>Your Orders</h3>
+      {orders?.orders?.map((order) => (
+        <OrderItem key={order._id} order={order} />
+      ))}
+      <CustomPagination
+        resultsPerPage={orders?.resPerPage}
+        productsCount={orders?.ordersCount}
+      />
     </>
   );
 }

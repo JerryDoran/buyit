@@ -2,6 +2,8 @@ import Product from '../models/Product';
 import APIFilters from '../lib/APIFilters';
 
 export async function createProduct(req, res, next) {
+  req.body.user = req.user._id;
+
   const product = await Product.create(req.body);
 
   res.status(201).json({ product });

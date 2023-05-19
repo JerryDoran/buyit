@@ -81,13 +81,24 @@ export default function CartContextProvider({ children }) {
     router.push('/shipping');
   }
 
+  function clearCart() {
+    localStorage.removeItem('cart');
+    setCartToState();
+  }
+
   useEffect(() => {
     setCartToState();
   }, []);
 
   return (
     <CartContext.Provider
-      value={{ cart, addItemToCart, deleteItemFromCart, saveOnCheckout }}
+      value={{
+        cart,
+        addItemToCart,
+        deleteItemFromCart,
+        saveOnCheckout,
+        clearCart,
+      }}
     >
       {children}
     </CartContext.Provider>

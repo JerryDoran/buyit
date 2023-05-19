@@ -23,7 +23,7 @@ export default function CustomPagination({ resultsPerPage, productsCount }) {
       }
 
       const path = window.location.pathname + '?' + queryParams.toString();
-      
+
       router.push(path);
     }
   }

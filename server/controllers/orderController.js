@@ -1,6 +1,7 @@
 import getRawBody from 'raw-body';
 import Stripe from 'stripe';
 import Order from '../models/Order';
+import APIFilters from '../lib/APIFilters';
 const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
 
 export async function checkoutSession(req, res) {
@@ -113,4 +114,19 @@ export async function webhook(req, res) {
   } catch (error) {
     console.log(error);
   }
+}
+
+export async function myOrders(req, res) {
+  const resPerPage = 2;
+  const ordersCount = await Order.countDocuments();
+
+  const apiFilters = new APIFilters(Order.find(), req.query).pagination(
+    resPerPage
+  );
+
+  const orders = await apiFilters.query
+    .find({ user: req.user._id })
+    .populate('shippingInfo user');
+
+  res.status(200).json({ ordersCount, resPerPage, orders });
 }
