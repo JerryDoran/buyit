@@ -1,5 +1,7 @@
 import Product from '../models/Product';
 import APIFilters from '../lib/APIFilters';
+import { uploads } from '../lib/cloudinary';
+import fs from 'fs';
 
 export async function createProduct(req, res, next) {
   req.body.user = req.user._id;
@@ -42,4 +44,33 @@ export async function singleProduct(req, res, next) {
   }
 
   res.status(200).json({ product });
+}
+
+export async function uploadProductImages(req, res, next) {
+  let product = await Product.findById(req.query.productId);
+
+  if (!product) {
+    res
+      .status(404)
+      .json({ error: `Product not found with id ${req.query.productId}` });
+  }
+  const uploader = async (path) => await uploads(path, 'buyit/products');
+
+  const urls = [];
+  const files = req.files;
+
+  for (const file of files) {
+    const { path } = file;
+    const imageUrl = await uploader(path);
+    urls.push(imageUrl);
+    fs.unlinkSync(path); //deletes file from my uploads folder
+  }
+
+  product = await Product.findByIdAndUpdate(req.query.productId, {
+    images: urls,
+  });
+
+  // console.log('Urls', urls, 'Product', product);
+
+  res.status(200).json({ data: urls, product });
 }

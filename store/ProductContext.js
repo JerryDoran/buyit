@@ -28,6 +28,29 @@ export default function ProductContextProvider({ children }) {
     }
   }
 
+  async function uploadProductImages(formData, productId) {
+    try {
+      setLoading(true);
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/products/upload_images/${productId}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      if (data?.data) {
+        setLoading(false);
+        router.replace('/admin/products');
+      }
+    } catch (error) {
+      console.log(error);
+      setError(error?.response?.data?.message);
+    }
+  }
+
   return (
     <ProductContext.Provider
       value={{
@@ -36,6 +59,7 @@ export default function ProductContextProvider({ children }) {
         updated,
         setUpdated,
         newProduct,
+        uploadProductImages,
       }}
     >
       {children}
