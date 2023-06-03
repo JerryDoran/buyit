@@ -2,10 +2,11 @@
 
 import { ProductContext } from '@/store/ProductContext';
 import Image from 'next/image';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 
 export default function UploadImages({ productId }) {
-  const { uploadProductImages, error, loading } = useContext(ProductContext);
+  const { uploadProductImages, error, clearErrors, loading } =
+    useContext(ProductContext);
   const [images, setImages] = useState([]);
   const [imagesPreview, setImagesPreview] = useState([]);
 
@@ -41,6 +42,13 @@ export default function UploadImages({ productId }) {
 
     uploadProductImages(formData, productId);
   }
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      clearErrors();
+    }
+  }, [error, updated]);
 
   return (
     <div

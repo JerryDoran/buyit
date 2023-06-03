@@ -1,8 +1,29 @@
+'use client';
+
 import Link from 'next/link';
-import Sidebar from '../layout/Sidebar';
 import CustomPagination from '../layout/CustomPagination';
+import { useContext, useEffect } from 'react';
+import { ProductContext } from '@/store/ProductContext';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 export default function Products({ data }) {
+  const { deleteProduct, error, clearErrors } = useContext(ProductContext);
+  const router = useRouter();
+
+  function handleDeleteProduct(productId) {
+    deleteProduct(productId);
+    router.replace('/admin/products/');
+    toast.success('Product Deleted!');
+  }
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      clearErrors();
+    }
+  }, [error]);
+
   return (
     <div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
       <h1 className='text-3xl my-5 ml-4 font-bold'>
@@ -41,12 +62,15 @@ export default function Products({ data }) {
                   </Link>
 
                   <Link
-                    href={`/admin/products`}
+                    href={`/admin/products/${product?._id}`}
                     className='px-2 py-2 inline-block text-yellow-600 bg-white shadow-sm border border-gray-200 rounded-md hover:bg-gray-100 cursor-pointer mr-2'
                   >
                     <i className='fa fa-pencil' aria-hidden='true'></i>
                   </Link>
-                  <a className='px-2 py-2 inline-block text-red-600 bg-white shadow-sm border border-gray-200 rounded-md hover:bg-gray-100 cursor-pointer'>
+                  <a
+                    className='px-2 py-2 inline-block text-red-600 bg-white shadow-sm border border-gray-200 rounded-md hover:bg-gray-100 cursor-pointer'
+                    onClick={() => handleDeleteProduct(product?._id)}
+                  >
                     <i className='fa fa-trash' aria-hidden='true'></i>
                   </a>
                 </div>

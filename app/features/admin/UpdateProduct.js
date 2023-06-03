@@ -1,14 +1,11 @@
 'use client';
 
-import ProductContext from '@/context/ProductContext';
+import { ProductContext } from '@/store/ProductContext';
 import { useState, useContext, useEffect } from 'react';
 
 import { toast } from 'react-toastify';
 
 export default function UpdateProduct({ data }) {
-  const { updateProduct, error, updated, setUpdated, clearErrors } =
-    useContext(ProductContext);
-
   const [product, setProduct] = useState({
     name: data?.name,
     description: data?.description,
@@ -17,6 +14,8 @@ export default function UpdateProduct({ data }) {
     stock: data?.stock,
     category: data?.category,
   });
+  const { updateProductData, error, clearErrors, updated, setUpdated } =
+    useContext(ProductContext);
 
   const { name, description, price, seller, stock, category } = product;
 
@@ -44,12 +43,10 @@ export default function UpdateProduct({ data }) {
     'Sports',
   ];
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
 
-    console.log(product);
-
-    updateProduct(product, data?._id);
+    updateProductData(product, data?._id);
   };
 
   return (

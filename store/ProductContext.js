@@ -28,6 +28,36 @@ export default function ProductContextProvider({ children }) {
     }
   }
 
+  async function updateProductData(product, productId) {
+    try {
+      const { data } = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/products/${productId}`,
+        product
+      );
+
+      if (data) {
+        setUpdated(true);
+        router.replace('/admin/products/');
+      }
+    } catch (error) {
+      setError(error?.response?.data?.message);
+    }
+  }
+
+  async function deleteProduct(productId) {
+    try {
+      const { data } = await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/products/${productId}`
+      );
+
+      if (data?.success) {
+        router.replace('/admin/products/');
+      }
+    } catch (error) {
+      setError(error?.response?.data?.message);
+    }
+  }
+
   async function uploadProductImages(formData, productId) {
     try {
       setLoading(true);
@@ -51,6 +81,10 @@ export default function ProductContextProvider({ children }) {
     }
   }
 
+  function clearErrors() {
+    setError(null);
+  }
+
   return (
     <ProductContext.Provider
       value={{
@@ -59,7 +93,10 @@ export default function ProductContextProvider({ children }) {
         updated,
         setUpdated,
         newProduct,
+        updateProductData,
         uploadProductImages,
+        clearErrors,
+        deleteProduct,
       }}
     >
       {children}
