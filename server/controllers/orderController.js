@@ -2,12 +2,15 @@ import getRawBody from 'raw-body';
 import Stripe from 'stripe';
 import Order from '../models/Order';
 import APIFilters from '../lib/APIFilters';
+import ErrorHandler from '../lib/errorHandler';
 const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
 
 export async function checkoutSession(req, res) {
   const shippingInfo = req?.body?.shippingInfo;
 
   const body = req.body;
+
+  console.log('Body', body, 'Shipping Info', shippingInfo);
 
   const line_items = body?.items?.map((item) => {
     return {
@@ -73,7 +76,7 @@ async function getCartItems(line_items) {
 }
 
 export async function webhook(req, res) {
-  console.log(req);
+  console.log('Req', req);
   try {
     const rawBody = await getRawBody(req);
     const signature = req.headers['stripe-signature'];
@@ -129,4 +132,29 @@ export async function myOrders(req, res) {
     .populate('shippingInfo user');
 
   res.status(200).json({ ordersCount, resPerPage, orders });
+}
+
+export async function getAdminOrders(req, res) {
+  const resPerPage = 2;
+  const ordersCount = await Order.countDocuments();
+
+  const apiFilters = new APIFilters(Order.find(), req.query).pagination(
+    resPerPage
+  );
+
+  const orders = await apiFilters.query.find({}).populate('shippingInfo user');
+
+  res.status(200).json({ ordersCount, resPerPage, orders });
+}
+
+export async function getAdminOrder(req, res, next) {
+  const order = await Order.findById(req.query.orderId).populate(
+    'shippingInfo user'
+  );
+
+  if (!order) {
+    return next(new ErrorHandler('No order found with this ID', 404));
+  }
+
+  res.status(200).json({ order });
 }
