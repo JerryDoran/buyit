@@ -112,7 +112,7 @@ export async function webhook(req, res) {
       };
 
       const order = await Order.create(orderData);
-      res.status(201).json({ success: true });
+      res.status(201).json({ success: true, order });
     }
   } catch (error) {
     console.log(error);
@@ -157,4 +157,30 @@ export async function getAdminOrder(req, res, next) {
   }
 
   res.status(200).json({ order });
+}
+
+export async function updateAdminOrder(req, res, next) {
+  let order = await Order.findById(req.query.orderId);
+
+  if (!order) {
+    return next(new ErrorHandler('No order found with this ID', 404));
+  }
+
+  order = await Order.findByIdAndUpdate(req.query.orderId, {
+    orderStatus: req.body.orderStatus,
+  });
+
+  res.status(200).json({ success: true, order });
+}
+
+export async function deleteAdminOrder(req, res, next) {
+  const order = await Order.findById(req.query.orderId);
+
+  if (!order) {
+    return next(new ErrorHandler('No order found with this ID', 404));
+  }
+
+  await order.deleteOne();
+
+  res.status(200).json({ success: true });
 }

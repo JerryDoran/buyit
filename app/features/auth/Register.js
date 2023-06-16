@@ -67,8 +67,7 @@ export default function Register() {
             placeholder='Type your password'
             minLength={6}
             required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            A
           />
         </div>
 

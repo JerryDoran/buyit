@@ -1,6 +1,34 @@
+'use client';
+
+import { OrderContext } from '@/store/OrderContext';
 import Image from 'next/image';
+import { useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 export default function UpdateOrder({ order }) {
+  const { updateOrder, error, clearErrors, updated, setUpdated } =
+    useContext(OrderContext);
+
+  const [orderStatus, setOrderStatus] = useState(order?.orderStatus);
+
+  useEffect(() => {
+    if (updated) {
+      setUpdated(false);
+      toast.success('Order Successfully Update!');
+    }
+
+    if (error) {
+      toast.error(error);
+      clearErrors();
+    }
+  }, [error, updated]);
+
+  function handleSubmit() {
+    const orderData = { orderStatus };
+
+    updateOrder(order?._id, orderData);
+  }
+
   return (
     <article className='p-3 lg:p-5 mb-5 bg-white border border-blue-600 rounded-md'>
       <header className='lg:flex justify-between mb-4'>
@@ -84,6 +112,8 @@ export default function UpdateOrder({ order }) {
           <select
             className='block appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full'
             name='category'
+            value={orderStatus}
+            onChange={(e) => setOrderStatus(e.target.value)}
             required
           >
             {['Processing', 'Shipped', 'Delivered'].map((status) => (
@@ -108,6 +138,7 @@ export default function UpdateOrder({ order }) {
       <button
         type='submit'
         className='mb-2 px-4 py-2 text-center w-full inline-block text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700'
+        onClick={handleSubmit}
       >
         Update
       </button>
