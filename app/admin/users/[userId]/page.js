@@ -1,15 +1,15 @@
-import UpdateOrder from '@/app/features/admin/UpdateOrder';
+import UpdateUser from '@/app/features/admin/UpdateUser';
 import axios from 'axios';
 import { cookies } from 'next/headers';
 
-async function getOrder(orderId) {
+async function getUser(userId) {
   // this is protected route so I need to pass a token/cookie values to the backend
 
   const nextCookies = cookies();
   const nextAuthSessionToken = nextCookies.get('next-auth.session-token');
 
   const { data } = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/admin/orders/${orderId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/admin/users/${userId}`,
     {
       headers: {
         Cookie: `next-auth.session-token=${nextAuthSessionToken?.value}`,
@@ -20,8 +20,8 @@ async function getOrder(orderId) {
   return data;
 }
 
-export default async function AdminOrderDetailsPage({ params }) {
-  const data = await getOrder(params?.orderId);
+export default async function AdminUserDetailsPage({ params }) {
+  const data = await getUser(params?.userId);
 
-  return <UpdateOrder order={data?.order} />;
+  return <UpdateUser user={data?.user} />;
 }

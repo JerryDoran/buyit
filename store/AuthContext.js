@@ -138,6 +138,39 @@ export default function AuthContextProvider({ children }) {
     }
   }
 
+  async function updateAdminUser(userId, userData) {
+    try {
+      const { data } = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/users/${userId}`,
+        userData
+      );
+
+      if (data?.success) {
+        setUpdated(true);
+        router.replace('/admin/users/');
+      }
+    } catch (error) {
+      console.log(error);
+      setError(error?.response?.data?.message);
+    }
+  }
+
+  async function deleteAdminUser(userId) {
+    try {
+      const { data } = await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/users/${userId}`
+      );
+
+      if (data?.success) {
+        setUpdated(true);
+        router.replace('/admin/users');
+      }
+    } catch (error) {
+      console.log(error);
+      setError(error?.response?.data?.message);
+    }
+  }
+
   function clearError() {
     setError(null);
   }
@@ -158,6 +191,8 @@ export default function AuthContextProvider({ children }) {
         updateUser,
         updatePassword,
         deleteAddress,
+        updateAdminUser,
+        deleteAdminUser,
       }}
     >
       {children}

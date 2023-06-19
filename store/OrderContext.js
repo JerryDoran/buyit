@@ -18,7 +18,7 @@ export default function OrderContextProvider({ children }) {
         orderData
       );
 
-      if (data.success) {
+      if (data?.success) {
         setUpdated(true);
         router.replace('/admin/orders/');
       }
