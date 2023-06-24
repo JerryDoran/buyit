@@ -23,7 +23,7 @@ export default function ProductContextProvider({ children }) {
         router.replace('/admin/products');
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.response);
       setError(error?.response?.data?.message);
     }
   }
@@ -52,6 +52,21 @@ export default function ProductContextProvider({ children }) {
 
       if (data?.success) {
         router.replace('/admin/products/');
+      }
+    } catch (error) {
+      setError(error?.response?.data?.message);
+    }
+  }
+
+  async function postReview(reviewData) {
+    try {
+      const { data } = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/products/review`,
+        reviewData
+      );
+
+      if (data?.success) {
+        router.refresh(`/products/${reviewData?.productId}`);
       }
     } catch (error) {
       setError(error?.response?.data?.message);
@@ -95,6 +110,7 @@ export default function ProductContextProvider({ children }) {
         newProduct,
         updateProductData,
         uploadProductImages,
+        postReview,
         clearErrors,
         deleteProduct,
       }}

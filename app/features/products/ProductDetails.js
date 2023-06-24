@@ -1,15 +1,17 @@
 'use client';
 
 import { CartContext } from '@/store/CartContext';
-import { useRef, useContext } from 'react';
+import { useRef, useContext, useEffect } from 'react';
 /* eslint-disable @next/next/no-img-element */
 import StarRatings from 'react-star-ratings';
 import BreadCrumbs from '../layout/BreadCrumbs';
 import NewReview from '../reviews/NewReview';
 import Reviews from '../reviews/Reviews';
+import { OrderContext } from '@/store/OrderContext';
 
 export default function ProductDetails({ product }) {
   const { addItemToCart } = useContext(CartContext);
+  const { canUserReview, canReview } = useContext(OrderContext);
   const imageRef = useRef(null);
   const inStock = product?.stock >= 1;
   const breadCrumbs = [
@@ -19,6 +21,10 @@ export default function ProductDetails({ product }) {
       url: `/products/${product?._id}`,
     },
   ];
+
+  useEffect(() => {
+    canUserReview(product?._id);
+  }, []);
 
   function setImagePreview(url) {
     imageRef.current.src = url;
@@ -140,14 +146,14 @@ export default function ProductDetails({ product }) {
             </main>
           </div>
 
-          {/* <NewReview /> */}
+          {canReview && <NewReview product={product} />}
           <hr />
 
           <div className='font-semibold'>
             <h1 className='text-gray-500 review-title mb-6 mt-10 text-2xl'>
               Other Customers Reviews
             </h1>
-            {/* <Reviews /> */}
+            <Reviews reviews={product?.reviews} />
           </div>
         </div>
       </section>

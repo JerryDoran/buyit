@@ -184,3 +184,16 @@ export async function deleteAdminOrder(req, res, next) {
 
   res.status(200).json({ success: true });
 }
+
+export async function canReview(req, res, next) {
+  const productId = req.query.productId;
+
+  const orders = await Order.find({
+    user: req?.user?._id,
+    'orderItems.product': productId,
+  });
+
+  let canReview = orders.length >= 1 ? true : false;
+
+  res.status(200).json({ canReview });
+}

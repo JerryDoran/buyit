@@ -16,3 +16,9 @@ export function parseCallbackUrl(url) {
   const res = url.replace(/%3A/g, ':').replace(/%2F/g, '/');
   return res;
 }
+
+export function getUserReview(reviews, userId) {
+  const userReview = reviews.find((review) => review?.user?.id === userId);
+
+  return userReview;
+}
