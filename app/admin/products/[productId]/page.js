@@ -1,6 +1,7 @@
 import axios from 'axios';
 import UpdateProduct from '@/app/features/admin/UpdateProduct';
 import mongoose from 'mongoose';
+import { redirect } from 'next/navigation';
 
 async function getProduct(productId) {
   const { data } = await axios.get(

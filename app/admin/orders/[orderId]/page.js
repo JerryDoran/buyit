@@ -2,6 +2,7 @@ import UpdateOrder from '@/app/features/admin/UpdateOrder';
 import axios from 'axios';
 import mongoose from 'mongoose';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 async function getOrder(orderId) {
   // this is protected route so I need to pass a token/cookie values to the backend
