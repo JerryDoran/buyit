@@ -48,7 +48,7 @@ export default function UploadImages({ productId }) {
       toast.error(error);
       clearErrors();
     }
-  }, [error, updated]);
+  }, [error]);
 
   return (
     <div
